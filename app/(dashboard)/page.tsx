@@ -6,11 +6,13 @@ import AppHighlights from "./_components/AppHighlights";
 
 export default function Home() {
   const { open, isMobile } = useSidebar();
+
   return (
+    <div className="flex flex-col min-h-screen bg-green-200">
     <div
       className="w-full relative flex-1 min-h-screen flex
      flex-col items-center bg-gradient-to-br
-     from-purple-500/5 to-primary/5
+     from-red-1000/5 to-primary/5
      px-4 sm:px-6 lg:px-8
     "
     >
@@ -78,6 +80,7 @@ export default function Home() {
 
         <JobInfoForm />
       </div>
+    </div>
     </div>
   );
 }
