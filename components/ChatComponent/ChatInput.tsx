@@ -82,7 +82,7 @@ const ChatInput = ({ jobId, isDisabled, userId }: PropType) => {
             className="
             relative flex flex-col w-full border-gray-300
             border-[0.5px] shadow-md
-            rounded-2xl p-3 !bg-[rgba(243,244,246,.3)]
+            rounded-2xl p-3 !bg-[rgba(116, 116, 116, 0.3)]
             "
           >
             <AutosizeTextarea
