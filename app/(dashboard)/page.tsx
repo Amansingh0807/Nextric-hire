@@ -3,12 +3,13 @@ import { Button } from "@/components/ui/button";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import JobInfoForm from "./_components/JobInfoForm";
 import AppHighlights from "./_components/AppHighlights";
+import "./animated-gradient.css"
 
 export default function Home() {
   const { open, isMobile } = useSidebar();
 
   return (
-<div className="flex flex-col min-h-screen bg-gradient-to-tr from-[#3ECF8E] to-[#3B82F6]">
+<div className="animated-gradient">
     <div
       className="w-full relative flex-1 min-h-screen flex
      flex-col items-center bg-gradient-to-br
@@ -38,7 +39,7 @@ export default function Home() {
                 className="absolute -right-2
               top-0 w-[180px]
               md:w-[220px] lg:w-[270px] h-10 sm:h-14
-              lg:h-16 bg-primary rotate-2 rounded-lg z-10
+              lg:h-16 bg-[#0ca997] rotate-2 rounded-lg z-10
               "
               />
               <span className="relative text-white z-10">Assistant</span>
@@ -46,13 +47,13 @@ export default function Home() {
           </h1>
 
           <p
-            className="text-base sm:text-lg text-gray-600
+            className="text-base sm:text-lg text-white
           mt-3 sm:mt-4 max-w-2xl mx-auto
           "
           >
             Join millions of{" "}
             <span className="relative inline-block">
-              <span className="text-[#FB923C]">
+              <span className="text-[#4ef0ba]">
                 job seekers and professionals
               </span>
               <svg

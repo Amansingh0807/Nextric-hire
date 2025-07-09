@@ -69,18 +69,18 @@ const JobInfoForm = () => {
   return (
     <div
       className="pt-3 mb-3 z-10 mx-auto
-  w-full max-w-2xl
+  w-full max-w-2xl bg-grey-100
     "
     >
       <div
         className="flex flex-col border-[0.5px]
-          border-zine-300 mx-2 md:mx-0 items-stretch
+          border-[5px] border-[#646464] mx-2 md:mx-0 items-stretch
           transition-all duration-200
           relative shadow-md
-          rounded-2xl bg-white
+          rounded-2xl bg-white border-zinc-200
           "
       >
-        <div className="flex flex-col gap-3.5 m-3.5">
+        <div className="flex flex-col gap-3.5 m-3.5 ">
           <AutosizeTextarea
             ref={textareaRef}
             rows={3}
@@ -97,7 +97,7 @@ const JobInfoForm = () => {
             className="resize-none pr-12 text-base !border-0
                       font-normal !shadow-none !ring-0
                       focus-visible:!ring-offset-0
-                      focus-visible:!ring-0
+                      focus-visible:!ring-0 
                       "
           />
         </div>
