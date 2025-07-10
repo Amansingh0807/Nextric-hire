@@ -42,7 +42,7 @@ const AppSidebar = () => {
                     "
         >
           <Link href="/" className="text-white text-xl">
-            Job<b className="text-primary">Assistant</b>.ai
+          <b className="text-[#47c997]">Nextric</b>Hire
           </Link>
           <SidebarTrigger className="!text-white !p-0 !bg-gray-800" />
         </SidebarHeader>
