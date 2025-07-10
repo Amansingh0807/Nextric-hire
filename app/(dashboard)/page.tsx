@@ -29,11 +29,11 @@ export default function Home() {
           <h1
             className="text-[2.5rem] md:text-5xl lg:text-6xl
           font-bold bg-gradient-to-r from-primary
-          to-purple-600 bg-clip-text text-[#070D1B]
+          to-purple-600 bg-clip-text text-[#e0e0e0]
           tracking-[-0.8px]
           "
           >
-            AI Job Insight
+          Your Only Chat
             <span className="relative inline-block pl-3 sm:pl-5">
               <div
                 className="absolute -right-2
