@@ -143,34 +143,71 @@ export const generateAIJobInsightResponse = internalAction({
         timestamp: new Date(item.createdAt).toISOString(),
       }))
     );
-    const stream = await chatSession.sendMessageStream({ message: prompt });
-    let fullResponse = "";
-    let lastUpdateTime = Date.now();
 
-    for await (const chunk of stream) {
-      fullResponse += chunk.text;
+    try {
+      const stream = await chatSession.sendMessageStream(prompt);
+      let fullResponse = "";
+      let lastUpdateTime = Date.now();
 
-      const currentTime = Date.now();
-      if (currentTime - lastUpdateTime > 100 || chunk?.text?.includes(".")) {
-        //update job con
+      // Handle the stream properly - use the stream's async iterator
+      const reader = stream.stream;
+      
+      // Alternative approach 1: If stream has a proper async iterator
+      if (reader && typeof reader[Symbol.asyncIterator] === 'function') {
+        for await (const chunk of reader) {
+          // FIX APPLIED HERE: Call text() to get the string
+          const textContent = chunk.text();
+          if (textContent) {
+            fullResponse += textContent;
+            
+            const currentTime = Date.now();
+            // FIX APPLIED HERE: Use textContent instead of chunk.text
+            if (currentTime - lastUpdateTime > 100 || textContent.includes(".")) {
+              await ctx.runMutation(api.jobInsightConversation.update, {
+                id: responseId,
+                text: fullResponse + " ...",
+              });
+              lastUpdateTime = currentTime;
+            }
+          }
+        }
+      } else {
+        // Alternative approach 2: Use the response method
+        const response = await stream.response;
+        fullResponse = response.text();
+        
         await ctx.runMutation(api.jobInsightConversation.update, {
           id: responseId,
           text: fullResponse + " ...",
         });
-        lastUpdateTime = currentTime;
       }
-    }
-    await ctx.runMutation(api.jobInsightConversation.update, {
-      id: responseId,
-      text: fullResponse,
-      status: JobInsightStatus.COMPLETED,
-    });
 
-    // Deduct credit after successful job creation
-    await ctx.runMutation(api.apiLimit.deductCredit, {
-      userId: args.userId,
-      credit: CREDIT_COST.JOB_CHAT_MESSAGE,
-    });
+      // Final update with complete response
+      await ctx.runMutation(api.jobInsightConversation.update, {
+        id: responseId,
+        text: fullResponse,
+        status: JobInsightStatus.COMPLETED,
+      });
+
+      // Deduct credit after successful job creation
+      await ctx.runMutation(api.apiLimit.deductCredit, {
+        userId: args.userId,
+        credit: CREDIT_COST.JOB_CHAT_MESSAGE,
+      });
+      
+    } catch (error) {
+      console.error("Error generating AI response:", error);
+      
+      // Update the conversation with error status
+      await ctx.runMutation(api.jobInsightConversation.update, {
+        id: responseId,
+        text: "Sorry, I encountered an error while generating the response. Please try again.",
+        status: JobInsightStatus.FAILED,
+      });
+      
+      throw error;
+    }
+    
     return;
   },
 });

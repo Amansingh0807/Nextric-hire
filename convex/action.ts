@@ -22,17 +22,17 @@ export const processJobWithAI = internalAction({
     let htmlDescription = "";
     try {
       const prompt = getJobTitleDescPrompt(processedDesc);
-      const response = await genAI.getGenerativeModel.generateContent({
-        model: "gemini-2.0-flash",
+
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+      const result = await model.generateContent({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
-        config: {
-          maxOutputTokens: 2000,
-          temperature: 0.3,
-          responseMimeType: "application/json",
-        },
       });
-      if (response.text) {
-        const parsedResponse = JSON.parse(response.text);
+
+      const text = await result.response.text(); // ✅ correctly get text output
+
+      if (text) {
+        const parsedResponse = JSON.parse(text);
         title = parsedResponse.title;
         htmlDescription = parsedResponse.htmlDescription;
       }
@@ -73,7 +73,7 @@ const welcomeMessage = (title: string) => `
       <p>Identify key skills and gaps to focus on.</p>
     </li>
     <li style="margin-bottom: 0.5rem;">
-      <h5 style="font-weight: 500;">📊Specific Insights:</h5>
+      <h5 style="font-weight: 500;">📊 Specific Insights:</h5>
       <p>Understand the role's requirements, responsibilities, and expectations.</p>
     </li>
   </ul>
