@@ -21,7 +21,7 @@ const ChatLeftPanel = (props: { jobId: string }) => {
       >
         <div className="flex items-center gap-2">
           {(!open || isMobile) && <SidebarTrigger />}
-          <h1 className="font-semibold pt-1">Job Insight Mode</h1>
+          <h1 className="font-semibold pt-1">Job Analysis</h1>
         </div>
       </div>
       <div className="flex-1 overflow-hidden">

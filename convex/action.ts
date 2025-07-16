@@ -60,7 +60,7 @@ export const processJobWithAI = internalAction({
 });
 
 const welcomeMessage = (title: string) => `
-  <h3 style="font-weight: 600; margin-bottom: 1rem;">Welcome to your Job Insight Assistant!</h3>
+  <h3 style="font-weight: 600; margin-bottom: 1rem;">Welcome to Nextric Hire!</h3>
   <p style="margin-bottom: 1rem;">I've analyzed the <strong style="font-weight: 550;">${title}</strong> position.</p>
   <p style="margin-bottom: 1rem;">Here's what I can help with:</p>
   <ul style="list-style-type: circle; list-style-position: outside; margin-bottom: 1rem;">

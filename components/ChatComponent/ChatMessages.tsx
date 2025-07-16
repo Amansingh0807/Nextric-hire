@@ -112,7 +112,7 @@ const ChatMessages = (props: PropType) => {
         >
           <MessageSquareTextIcon className="w-8 h-8" />
           <h3 className="font-semibold text-lg">
-            Your Job Insight Assistant is Ready!
+            Your Job Insights ares Ready!
           </h3>
           <p className="text-gray-500 tex-sm">
             Get tailored advice and insight to ace job search
