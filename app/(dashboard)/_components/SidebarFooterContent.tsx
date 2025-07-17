@@ -42,8 +42,7 @@ const SidebarFooterContent = ({
     <div className="flex flex-col gap-3">
       {isSignedIn && (
         <div
-          className="bg-gradient-to-r from-purple-600 
-        to-primary rounded-lg p-4"
+          className="bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-600 rounded-lg p-4"
         >
           <h3 className="text-white font-semibold text-sm mb-1">
             {loadingCredit ? (
@@ -55,7 +54,7 @@ const SidebarFooterContent = ({
           <p className="text-white/80 text-xs mb-2">Ulock premium features</p>
           <Button
             onClick={onUpgradeClick}
-            className="w-full bg-white text-primary
+            className="w-full bg-white text-black
                       font-semibold hover:bg-white/90 text-sm
                       "
           >
