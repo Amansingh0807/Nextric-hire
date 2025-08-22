@@ -19,6 +19,7 @@ import type * as job from "../job.js";
 import type * as jobInsightConversation from "../jobInsightConversation.js";
 import type * as payment from "../payment.js";
 import type * as paymentAction from "../paymentAction.js";
+import type * as testChat from "../testChat.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   jobInsightConversation: typeof jobInsightConversation;
   payment: typeof payment;
   paymentAction: typeof paymentAction;
+  testChat: typeof testChat;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

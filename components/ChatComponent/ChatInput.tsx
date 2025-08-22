@@ -31,16 +31,24 @@ const ChatInput = ({ jobId, isDisabled, userId }: PropType) => {
   };
 
   const handleSubmit = async (input: string) => {
-    if (!input.trim() || isDisabled || !userId) return;
+    if (!input.trim() || isDisabled || !userId) {
+      console.log("Submit blocked:", { inputEmpty: !input.trim(), isDisabled, noUserId: !userId });
+      return;
+    }
+    
+    console.log("Submitting message:", { jobId, userId, message: input });
     setIsLoading(true);
+    
     try {
-      await sendMessage({
+      const result = await sendMessage({
         jobId,
         userId,
         message: input,
       });
+      console.log("Message sent successfully:", result);
       setInput("");
     } catch (error) {
+      console.error("Error sending message:", error);
       const errorMessage =
         error instanceof ConvexError && error?.data?.message
           ? error?.data?.message
@@ -52,6 +60,10 @@ const ChatInput = ({ jobId, isDisabled, userId }: PropType) => {
       ) {
         //Open Buy Credit dialog
         openModal();
+      } else {
+        // Show the actual error message for debugging
+        console.error("Full error object:", error);
+        toast.error(`Debug: ${JSON.stringify(error)}`);
       }
       toast.error(errorMessage);
     } finally {

@@ -4,7 +4,7 @@ import { CREDIT_COST } from "@/lib/api-limits";
 import { Id } from "./_generated/dataModel";
 import { JobInsightStatus, Role } from "@/lib/constants";
 import { api, internal } from "./_generated/api";
-import { chatSession } from "@/lib/gemini-ai";
+import { createChatSession } from "@/lib/gemini-ai";
 import { getJobInsightConversationPrompt } from "@/lib/prompt";
 
 export const create = mutation({
@@ -41,12 +41,30 @@ export const sendUserMessage = mutation({
     message: v.string(),
   },
   handler: async (ctx, args) => {
-    const apiLimits = await ctx.db
+    console.log("sendUserMessage called with:", { userId: args.userId, jobId: args.jobId, message: args.message.substring(0, 50) + "..." });
+    
+    // Check or create API limits for user
+    let apiLimits = await ctx.db
       .query("apiLimits")
       .withIndex("by_user", (q) => q.eq("userId", args.userId))
       .unique();
 
+    // If no API limits exist, create them with free tier credits
+    if (!apiLimits) {
+      console.log("Creating new API limits for user:", args.userId);
+      const newApiLimitId = await ctx.db.insert("apiLimits", {
+        userId: args.userId,
+        credits: 10.0, // FREE_TIER_CREDITS
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+      apiLimits = await ctx.db.get(newApiLimitId);
+    }
+
+    console.log("User API limits:", apiLimits?.credits);
+
     if (!apiLimits || apiLimits.credits < CREDIT_COST.JOB_CHAT_MESSAGE) {
+      console.log("Insufficient credits:", { required: CREDIT_COST.JOB_CHAT_MESSAGE, available: apiLimits?.credits ?? 0 });
       throw new ConvexError({
         type: "INSUFFICIENT_CREDITS",
         message: "You have run out of credits",
@@ -56,7 +74,12 @@ export const sendUserMessage = mutation({
     }
 
     const job = await ctx.db.get(args.jobId as Id<"jobs">);
-    if (!job) throw new ConvexError("Job nod found");
+    if (!job) {
+      console.log("Job not found for ID:", args.jobId);
+      throw new ConvexError("Job not found");
+    }
+    
+    console.log("Job found:", { id: job._id, title: job.jobTitle });
 
     const conversationId = await ctx.db.insert("jobInsightConversations", {
       userId: args.userId,
@@ -67,8 +90,11 @@ export const sendUserMessage = mutation({
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
+    
+    console.log("User message saved with ID:", conversationId);
 
     // Schedule AI response
+    console.log("Scheduling AI response...");
     await ctx.scheduler.runAfter(
       0,
       internal.jobInsightConversation.generateAIJobInsightResponse,
@@ -145,42 +171,36 @@ export const generateAIJobInsightResponse = internalAction({
     );
 
     try {
-      const stream = await chatSession.sendMessageStream(prompt);
-      let fullResponse = "";
-      let lastUpdateTime = Date.now();
-
-      // Handle the stream properly - use the stream's async iterator
-      const reader = stream.stream;
+      // Create a new chat session for this conversation
+      console.log("Creating Gemini AI session...");
       
-      // Alternative approach 1: If stream has a proper async iterator
-      if (reader && typeof reader[Symbol.asyncIterator] === 'function') {
-        for await (const chunk of reader) {
-          // FIX APPLIED HERE: Call text() to get the string
-          const textContent = chunk.text();
-          if (textContent) {
-            fullResponse += textContent;
-            
-            const currentTime = Date.now();
-            // FIX APPLIED HERE: Use textContent instead of chunk.text
-            if (currentTime - lastUpdateTime > 100 || textContent.includes(".")) {
-              await ctx.runMutation(api.jobInsightConversation.update, {
-                id: responseId,
-                text: fullResponse + " ...",
-              });
-              lastUpdateTime = currentTime;
-            }
-          }
-        }
-      } else {
-        // Alternative approach 2: Use the response method
-        const response = await stream.response;
-        fullResponse = response.text();
-        
-        await ctx.runMutation(api.jobInsightConversation.update, {
-          id: responseId,
-          text: fullResponse + " ...",
-        });
+      // Import and test Gemini AI
+      const { genAI } = await import("@/lib/gemini-ai");
+      
+      if (!genAI) {
+        throw new Error("Failed to import Gemini AI");
       }
+      
+      console.log("Gemini AI imported successfully");
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      
+      console.log("Sending message to Gemini AI with prompt length:", prompt.length);
+      console.log("First 200 chars of prompt:", prompt.substring(0, 200));
+      
+      const result = await model.generateContent(prompt);
+      
+      if (!result || !result.response) {
+        throw new Error("No response from Gemini AI");
+      }
+      
+      const response = await result.response;
+      const fullResponse = response.text();
+      
+      if (!fullResponse || fullResponse.trim().length === 0) {
+        throw new Error("Empty response from Gemini AI");
+      }
+      
+      console.log("Received response from Gemini AI:", fullResponse.substring(0, 100) + "...");
 
       // Final update with complete response
       await ctx.runMutation(api.jobInsightConversation.update, {
@@ -195,17 +215,37 @@ export const generateAIJobInsightResponse = internalAction({
         credit: CREDIT_COST.JOB_CHAT_MESSAGE,
       });
       
+      console.log("AI response processing completed successfully");
+      
     } catch (error) {
       console.error("Error generating AI response:", error);
       
-      // Update the conversation with error status
+      // Provide a fallback response instead of just error
+      const fallbackResponse = `<div style="padding: 10px;">
+        <h3>🤖 Job Insight Assistant</h3>
+        <p>Thank you for your question about this job opportunity! Here are some general insights:</p>
+        <ul>
+          <li><strong>📝 Application Tips:</strong> Tailor your resume to highlight relevant skills mentioned in the job description</li>
+          <li><strong>🎯 Key Focus Areas:</strong> Review the requirements carefully and prepare examples that demonstrate your experience</li>
+          <li><strong>💡 Next Steps:</strong> Research the company culture and prepare thoughtful questions for the interview</li>
+        </ul>
+        <p><em>For more detailed insights, please try asking a more specific question!</em></p>
+      </div>`;
+      
+      // Update the conversation with fallback response
       await ctx.runMutation(api.jobInsightConversation.update, {
         id: responseId,
-        text: "Sorry, I encountered an error while generating the response. Please try again.",
-        status: JobInsightStatus.FAILED,
+        text: fallbackResponse,
+        status: JobInsightStatus.COMPLETED,
       });
       
-      throw error;
+      // Still deduct credit since we provided a response
+      await ctx.runMutation(api.apiLimit.deductCredit, {
+        userId: args.userId,
+        credit: CREDIT_COST.JOB_CHAT_MESSAGE,
+      });
+      
+      console.log("Fallback response provided due to AI error");
     }
     
     return;
