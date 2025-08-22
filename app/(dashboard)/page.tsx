@@ -9,79 +9,95 @@ export default function Home() {
   const { open, isMobile } = useSidebar();
 
   return (
-<div className="animated-gradient">
-    <div
-      className="w-full relative flex-1 min-h-screen flex
-     flex-col items-center bg-gradient-to-br
-     from-purple-500/5 to-primary/5
-     px-4 sm:px-6 lg:px-8
-    "
-    >
-      <div className="absolute left-5 top-5">
-        {(!open || isMobile) && <SidebarTrigger />}
+    <div className="animated-gradient min-h-screen h-screen overflow-hidden relative">
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-cyan-400/5 to-blue-600/5 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="space-y-3 w-full max-w-7xl mx-auto">
-        {/* <AppHighlights /> */}
-        <AppHighlights />
+      {/* Sidebar Trigger */}
+      <div className="absolute left-6 top-6 z-50">
+        {(!open || isMobile) && (
+          <div className="backdrop-blur-md bg-white/10 rounded-xl p-2 border border-white/20">
+            <SidebarTrigger className="text-white" />
+          </div>
+        )}
+      </div>
 
-        <div className="text-center mt-5">
-          <h1
-            className="text-[2.5rem] md:text-5xl lg:text-6xl
-          font-bold bg-gradient-to-r from-primary
-          to-purple-600 bg-clip-text text-[#e0e0e0]
-          tracking-[-0.8px]
-          "
-          >
-          Your Only Chat
-            <span className="relative inline-block pl-3 sm:pl-5">
-              <div
-                className="absolute -right-2
-              top-0 w-[180px]
-              md:w-[220px] lg:w-[270px] h-10 sm:h-14
-              lg:h-16 bg-[#0ca997] rotate-2 rounded-lg z-10
-              "
-              />
-              <span className="relative text-white z-10">Assistant</span>
-            </span>
-          </h1>
-
-          <p
-            className="text-base sm:text-lg text-white
-          mt-3 sm:mt-4 max-w-2xl mx-auto
-          "
-          >
-            Join millions of{" "}
-            <span className="relative inline-block">
-              <span className="text-[#4ef0ba]">
-                job seekers and professionals
-              </span>
-              <svg
-                viewBox="0 0 336 10"
-                className="absolute left-[1%] bottom-0 w-[97%]
-                 h-[7px]"
-                preserveAspectRatio="none"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <path
-                  d="M1 8.90571C100.5 7.40571 306.7 5.305715 334 8.90571"
-                  stroke="#FB923C"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>{" "}
-            to instantly
-            <br className="hidden sm:block" />
-            get job insights and prepare for interviews with AI-powered tools
-          </p>
+      {/* Main Content Container */}
+      <div className="relative z-10 h-full flex flex-col items-center justify-center px-6">
+        
+        {/* Top Section - App Highlights */}
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 w-full max-w-4xl">
+          <AppHighlights />
         </div>
 
-        <JobInfoForm />
+        {/* Center Section - Main Content */}
+        <div className="flex flex-col items-center justify-center text-center space-y-8 max-w-4xl mx-auto">
+          
+          {/* Main Heading */}
+          <div className="space-y-6">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">
+              <span className="bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent">
+                Your AI-Powered
+              </span>
+              <br />
+              <span className="relative">
+                <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">
+                  Career Assistant
+                </span>
+                <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-purple-600 rounded-full"></div>
+              </span>
+            </h1>
+            
+            <p className="text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed">
+              Transform your job search with AI-powered insights, personalized CV optimization, 
+              and intelligent interview preparation tools.
+            </p>
+          </div>
+
+          {/* Job Input Form */}
+          <div className="w-full max-w-2xl">
+            <JobInfoForm />
+          </div>
+
+          {/* Feature Pills */}
+          <div className="flex flex-wrap gap-3 justify-center mt-8">
+            <div className="backdrop-blur-md bg-white/10 rounded-full px-4 py-2 border border-white/20">
+              <span className="text-white/90 text-sm font-medium">✨ AI Analysis</span>
+            </div>
+            <div className="backdrop-blur-md bg-white/10 rounded-full px-4 py-2 border border-white/20">
+              <span className="text-white/90 text-sm font-medium">📝 CV Optimization</span>
+            </div>
+            <div className="backdrop-blur-md bg-white/10 rounded-full px-4 py-2 border border-white/20">
+              <span className="text-white/90 text-sm font-medium">🎯 Interview Prep</span>
+            </div>
+            <div className="backdrop-blur-md bg-white/10 rounded-full px-4 py-2 border border-white/20">
+              <span className="text-white/90 text-sm font-medium">🔍 Skill Insights</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section - Stats or Additional Info */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+          <div className="flex items-center space-x-8 text-white/60 text-sm">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span>1M+ Job Seekers</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse delay-300"></div>
+              <span>AI-Powered Analysis</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-700"></div>
+              <span>Instant Results</span>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
     </div>
   );
 }
