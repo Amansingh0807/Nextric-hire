@@ -67,25 +67,14 @@ const JobInfoForm = () => {
     }
   };
   return (
-    <div
-      className="pt-3 mb-3 z-10 mx-auto
-  w-full max-w-2xl bg-grey-100
-    "
-    >
-      <div
-        className="flex flex-col border-[0.5px]
-          border-[5px] border-[#646464] mx-2 md:mx-0 items-stretch
-          transition-all duration-200
-          relative shadow-md
-          rounded-2xl bg-white border-zinc-200
-          "
-      >
-        <div className="flex flex-col gap-3.5 m-3.5 ">
+    <div className="pt-2 mb-2 z-10 mx-auto w-full max-w-2xl">
+      <div className="flex flex-col border-[0.5px] border-[#646464] mx-1 sm:mx-2 md:mx-0 items-stretch transition-all duration-200 relative shadow-md rounded-xl sm:rounded-2xl bg-white border-zinc-200">
+        <div className="flex flex-col gap-2 sm:gap-3 m-2 sm:m-3">
           <AutosizeTextarea
             ref={textareaRef}
-            rows={3}
-            maxHeight={180}
-            minHeight={100}
+            rows={2}
+            maxHeight={120}
+            minHeight={60}
             value={jobDescription}
             onChange={handleChange}
             onKeyDown={(e) => {
@@ -94,27 +83,20 @@ const JobInfoForm = () => {
               }
             }}
             placeholder="Paste Job title & description"
-            className="resize-none pr-12 text-base !border-0
-                      font-normal !shadow-none !ring-0
-                      focus-visible:!ring-offset-0
-                      focus-visible:!ring-0 
-                      "
+            className="resize-none pr-10 text-xs sm:text-sm md:text-base !border-0 font-normal !shadow-none !ring-0 focus-visible:!ring-offset-0 focus-visible:!ring-0"
           />
         </div>
-        <div
-          className="flex w-full items-center
-              justify-end px-5 py-2
-              "
-        >
+        <div className="flex w-full items-center justify-end px-2 sm:px-3 py-1.5 sm:py-2">
           <Button
             size="icon"
             onClick={handleSubmit}
             disabled={isSubmitting || !jobDescription?.trim()}
+            className="h-7 w-7 sm:h-8 sm:w-8"
           >
             {isSubmitting ? (
-              <Loader className="w-4 h-4 animate-spin" />
+              <Loader className="w-3 h-3 animate-spin" />
             ) : (
-              <SendIcon />
+              <SendIcon className="w-3 h-3" />
             )}
           </Button>
         </div>
