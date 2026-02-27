@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/sidebar";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, FileTextIcon } from "lucide-react";
 import JobSidebarList from "./JobSidebarList";
 import SignInPrompt from "./SignInPrompt";
 import SidebarFooterContent from "./SidebarFooterContent";
@@ -61,6 +61,22 @@ const AppSidebar = () => {
                 >
                   <PlusIcon className="w-4 h-4" />
                   <span>New Job</span>
+                </Button>
+              </Link>
+
+              {/* Resume Builder Link */}
+              <Link href="/resume-builder">
+                <Button
+                  variant="outline"
+                  className="w-full 
+            !bg-transparent !text-white
+            border-[rgba(255,255,255,.2)]
+            mt-2 !h-10 !rounded-lg !font-medium text-sm
+            hover:!bg-[#47c997]/15 hover:!border-[#47c997]/40 hover:!text-[#47c997] transition-colors
+            "
+                >
+                  <FileTextIcon className="w-4 h-4" />
+                  <span>Resume Builder</span>
                 </Button>
               </Link>
             </SidebarGroupContent>
